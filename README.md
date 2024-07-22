@@ -1,4 +1,7 @@
 # BiliBili Twitch Widget Setup
+
+# Step 0
+install requirements used in main.py
  
 # Step 1
 Create a secrets.json file in the project folder with the below structure:
@@ -8,7 +11,7 @@ Create a secrets.json file in the project folder with the below structure:
 }
 
 # Step 2
-Create a twitch bot through their portal and generate a token for your bot. Next create an deepl account and generate an API key, assign these keys in your json file
+Create a twitch bot through their portal and generate a token for your bot. Next, create an deepl account and generate an API key, assign these keys in your json file
 
 # Step 3
 In super().__init__ under the bot class, set the initial_channels to an array of channels you want to listen to (your own channel NAME not link)
