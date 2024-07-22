@@ -5,6 +5,11 @@ from threading import Thread
 from twitchio.ext import commands
 import deepl
 
+#region Config
+useChinese = True
+#endregion
+
+
 # Flask app setup
 app = Flask(__name__)
 
@@ -20,7 +25,7 @@ translator = deepl.Translator(deepl_auth_key)
 
 class Bot(commands.Bot):
     def __init__(self):
-        super().__init__(token=twitch_secret, prefix="!", initial_channels=["LulneWolfy", "t___homas", "ExtraEmily"])
+        super().__init__(token=twitch_secret, prefix="!", initial_channels=["LulneWolfy", "t___homas"])
         self.last_messages = []
 
     async def event_ready(self):
@@ -29,7 +34,13 @@ class Bot(commands.Bot):
     async def event_message(self, message):
         print(f"Message from {message.author.name}: {message.content}")
         # Store the message
-        self.last_messages.append(f"{message.author.name}: {translator.translate_text(message.content, target_lang='ZH')}")
+        if useChinese:
+            self.last_messages.append(
+                f"{message.author.name}: {translator.translate_text(message.content, target_lang='ZH')}")
+        elif not useChinese:
+            self.last_messages.append(
+                f"{message.author.name}: {message.content}")
+
         if len(self.last_messages) > 5:
             self.last_messages.pop(0)
 
