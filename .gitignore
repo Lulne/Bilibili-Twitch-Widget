@@ -1,0 +1,6 @@
+# Ignore secrets.json
+secrets.json
+
+# Other ignore rules can go here
+# For example, ignoring node_modules for a Node.js project
+node_modules/

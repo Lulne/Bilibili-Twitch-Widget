@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Chat Messages</title>
+    <style>
+        body {
+            background: rgba(0, 0, 0, 0);
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages-container {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Ensure the container covers the viewport height */
+            overflow: hidden;
+        }
+
+        #messages {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .message {
+            margin: 10px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0);
+            text-shadow: 0 0 3px #000, 0 0 3px #000;
+            border-radius: 5px;
+            position: absolute;
+            white-space: nowrap;
+            animation: scroll-left 10s linear; /* Adjust duration as needed */
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100vw);
+            }
+            100% {
+                transform: translateX(-100vw);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="messages-container">
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        let previousMessages = [];
+
+        const fetchMessages = async () => {
+            try {
+                const response = await fetch('/messages');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const messages = await response.json();
+                console.log('Fetched messages:', messages); // Debugging line
+
+                // Only update if messages have changed
+                if (JSON.stringify(messages) !== JSON.stringify(previousMessages)) {
+                    const messagesDiv = document.getElementById('messages');
+
+                    messages.forEach(msg => {
+                        if (!previousMessages.includes(msg)) {
+                            const top = Math.random() * 28;  // Random vertical position within the top 1/4th of the screen
+                            const duration = 7 + Math.random() * 2; // Random duration between 15 and 16 seconds
+                            const messageElem = document.createElement('div');
+                            messageElem.className = 'message';
+                            messageElem.style.top = `${top}%`;
+                            messageElem.style.animationDuration = `${duration}s`;
+                            messageElem.textContent = msg;
+
+                            // Remove the message after the animation ends
+                            messageElem.addEventListener('animationend', () => {
+                                messageElem.remove();
+                            });
+
+                            messagesDiv.appendChild(messageElem);
+                        }
+                    });
+
+                    console.log('Updated messages HTML:', messagesDiv.innerHTML); // Debugging line
+
+                    previousMessages = messages;
+                }
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        };
+
+        // Fetch messages initially
+        fetchMessages();
+        // Fetch messages every 0.2 seconds
+        setInterval(fetchMessages, 200);
+    </script>
+</body>
+</html>
